@@ -32,9 +32,11 @@ npm install # or yarn install
 
 ## Project Setup
 
+> WIP !
+
 ### Features
 
-Projects created with `Procedural-Dungeon` have the following features out-of-the-box:
+Projects created with `Phaser 3.24` with [phaser-project-template](https://github.com/yandeu/phaser-project-template/) devlop by [yandeu](https://github.com/yandeu/) have the following features out-of-the-box:
 
 - [Typescript](https://www.typescriptlang.org/).
 
@@ -77,7 +79,7 @@ Read the [contribution guidelines](https://github.com/AllanCerveaux/Procedural-D
 
 ## Release Notes
 
-Read the [news page](https://github.com/AllanCerveaux/Procedural-Dungeon/blob/master/RELEASE_NOTES.md) for info about the latest release.
+Read the [REALEASE_NOTE](https://github.com/AllanCerveaux/Procedural-Dungeon/blob/master/RELEASE_NOTES.md) for info about the latest release.
 
 ## License
 
