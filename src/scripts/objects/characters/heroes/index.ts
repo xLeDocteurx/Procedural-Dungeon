@@ -1,1 +1,1 @@
-export { default as Heroe } from './heroe'
+export { default as Hero } from './hero'
