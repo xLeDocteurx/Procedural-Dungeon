@@ -79,7 +79,7 @@ Read the [contribution guidelines](https://github.com/AllanCerveaux/Procedural-D
 
 ## Release Notes
 
-Read the [REALEASE_NOTE](https://github.com/AllanCerveaux/Procedural-Dungeon/blob/master/RELEASE_NOTES.md) for info about the latest release.
+Read the [REALEASE_NOTE](https://github.com/AllanCerveaux/Procedural-Dungeon/blob/master/RELEASE_NOTE.md) for info about the latest release.
 
 ## License
 
