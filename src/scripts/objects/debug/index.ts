@@ -1,1 +1,1 @@
-export { default as FpsText } from './fpsText'
+export { default as FpsText } from './fps-text/fpsText'
