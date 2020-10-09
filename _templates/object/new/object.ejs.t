@@ -1,8 +1,8 @@
 ---
-to: src/scripts/objects/<%= type %>/<%= folder %>/<%= name %>/<%= name %>.ts
+to: <%= objectPath %>
 ---
 
-export default class <%= h.inflection.classify(name) %> <% if(locals.gameobject !== "none" || locals.gameobject !== 'debug'){ -%>extend Phaser.GameObjects.<%= h.capitalize(gameobject) %> <% } -%>{
+export default class <%= h.inflection.classify(name) %> <% if(locals.gameobject){ -%>extend Phaser.GameObjects.<%= h.capitalize(gameobject) %> <% } -%>{
 
 <% if(locals.gameobject === "Sprite") { -%>
   /**

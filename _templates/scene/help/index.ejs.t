@@ -1,5 +1,5 @@
 ---
 message: |
-  - scene help
-  - scene new --name [NAME]
+  - scene help | Show all command
+  - scene new --name [NAME] | Generate new Scene
 ---
