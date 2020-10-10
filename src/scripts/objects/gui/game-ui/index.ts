@@ -1,1 +1,1 @@
-export { default as PhaserLogo } from './phaser-logo/phaserLogo'
+export * from './phaser-logo/phaserLogo'
