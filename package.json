@@ -8,7 +8,11 @@
     "start": "webpack-dev-server --config webpack/webpack.dev.js",
     "build": "webpack --config webpack/webpack.prod.js",
     "bundle": "npm run build",
-    "serve": "serve dist"
+    "serve": "serve dist",
+    "scene:help": "./node_modules/.bin/hygen scene help",
+    "scene:new": "./node_modules/.bin/hygen scene new",
+    "object:help": "./node_modules/.bin/hygen object help",
+    "object:new": "./node_modules/.bin/hygen object new"
   },
   "keywords": [
     "Phaser",
@@ -17,7 +21,12 @@
     "html5 game",
     "TypeScript",
     "webpack",
-    "starter"
+    "Dungeon",
+    "dungeon",
+    "procedural",
+    "Procedural",
+    "Procedural Dungeon",
+    "procedural dungeon"
   ],
   "author": {
     "name": "Allan Cerveaux",
