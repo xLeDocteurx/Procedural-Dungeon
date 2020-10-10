@@ -1,4 +1,4 @@
-import { MainScene, PreloadScene } from './scenes'
+import * as scenes from './scenes'
 
 const DEFAULT_WIDTH = 1280
 const DEFAULT_HEIGHT = 720
@@ -9,7 +9,7 @@ const config: Phaser.Types.Core.GameConfig = {
   render: {
     pixelArt: true,
   },
-  scene: [PreloadScene, MainScene],
+  scene: Object.values(scenes),
   loader: {
     path: 'assets/',
   },

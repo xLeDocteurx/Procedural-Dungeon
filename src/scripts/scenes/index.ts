@@ -1,2 +1,2 @@
-export { default as PreloadScene } from './main/preload.scene'
-export { default as MainScene } from './preload/main.scene'
+export { default as MainScene } from './main/main.scene'
+export { default as PreloadScene } from './preload/preload.scene'
