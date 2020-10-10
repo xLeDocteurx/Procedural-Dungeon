@@ -1,7 +1,7 @@
 {
-  "name": "phaser-project-template",
-  "version": "3.24.1",
-  "description": "Phaser 3 starter template with TypeScript and webpack.",
+  "name": "procedural-dungeon",
+  "version": "0.0.1",
+  "description": "Best procedural dungeon ever seen in js.",
   "homepage": "https://github.com/yandeu/phaser-project-template#readme",
   "main": "index.js",
   "scripts": {
