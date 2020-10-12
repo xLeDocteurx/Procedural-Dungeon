@@ -1,6 +1,5 @@
-import { AudioEngineContextsEnum } from '.'
 import { Dic } from '../../../utils/types'
-import { Sound, SoundType } from '../types/sound'
+import { Channel, Sound, SoundType } from '../types'
 
 export interface SoundElement {
   htmlAudioElement: HTMLAudioElement
@@ -9,13 +8,15 @@ export interface SoundElement {
 
 export class SoundPlayer {
   private soundsLibrary: Dic<Sound>
-  // private audioContext: AudioContext
+  private audioContext: AudioContext
   private audioElements: Dic<SoundElement> = {}
 
-  constructor(sounds: Dic<Sound>, audioEngineChannel: AudioEngineContextsEnum) {
+  constructor(sounds: Dic<Sound>, channel: Channel) {
     this.soundsLibrary = sounds
-    // this.audioContext = new AudioContext()
-    // this.audioContext.connect()
+
+    this.audioContext = new AudioContext()
+    // channel.connectNode(this.audioContext.destination)
+    this.audioContext.destination.connect(channel.input)
   }
 
   async playSound(name: string, volume = this.soundsLibrary[name].volume) {
@@ -39,11 +40,10 @@ export class SoundPlayer {
       this.audioElements[name].htmlAudioElement.loop = sound.type === SoundType.loop ? true : false
       this.audioElements[name].htmlAudioElement.volume = volume
 
-      // this.audioElements[name].mediaElementAudioSourceNode = new MediaElementAudioSourceNode()
-      // this.audioElements[name].mediaElementAudioSourceNode = this.audioContext.createMediaElementSource(
-      //   this.audioElements[name].htmlAudioElement
-      // )
-      // this.audioElements[name].mediaElementAudioSourceNode.connect(this.audioContext.destination)
+      this.audioElements[name].mediaElementAudioSourceNode = this.audioContext.createMediaElementSource(
+        this.audioElements[name].htmlAudioElement
+      )
+      this.audioElements[name].mediaElementAudioSourceNode.connect(this.audioContext.destination)
     }
   }
 

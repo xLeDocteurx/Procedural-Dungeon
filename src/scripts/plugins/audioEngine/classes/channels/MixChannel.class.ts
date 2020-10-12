@@ -14,6 +14,10 @@ export class MixChannel {
     this.input.connect(this.gain).connect(this._context.destination)
   }
 
+  connectNode(node: AudioNode) {
+    node.connect(this.input)
+  }
+
   setGain(value: number) {
     this.gain.gain.value = value
   }

@@ -1,4 +1,3 @@
-import 'phaser'
 import { MixChannel } from './channels'
 
 export interface AudioEngineContexts {
@@ -13,7 +12,7 @@ export enum AudioEngineContextsEnum {
   ambianceChannel = 'ambianceChannel',
 }
 
-export class AudioEngineClass {
+export class AudioEngine {
   private _masterChannel: MixChannel = new MixChannel()
 
   private _contexts: AudioEngineContexts = {
@@ -40,9 +39,9 @@ export class AudioEngineClass {
   //   return this._contexts[contextEnum].context
   // }
 
-  connectNode(node: AudioNode, context: AudioEngineContextsEnum = AudioEngineContextsEnum.soundEffectsChannel) {
-    node.connect(this._contexts[context].input)
-  }
+  // connectNode(node: AudioNode, context: AudioEngineContextsEnum = AudioEngineContextsEnum.soundEffectsChannel) {
+  //   node.connect(this._contexts[context].input)
+  // }
 
   // connectAudioNode(contextEnum: AudioEngineContextsEnum, mediaElement: HTMLMediaElement) {
   //   this._contexts[contextEnum].context.createMediaElementSource()

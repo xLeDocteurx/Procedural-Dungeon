@@ -23,6 +23,10 @@ export class ChannelStrip {
     channelFlow.connect(this.gain).connect(this.context.destination)
   }
 
+  connectNode(node: AudioNode) {
+    node.connect(this.input)
+  }
+
   setGain(value: number) {
     this.gain.gain.value = value
   }
