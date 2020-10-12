@@ -1,9 +1,9 @@
-import { AnimationLoader, AssetLoader } from '../../utils'
+import { AnimationLoader, AssetsLoader } from '../../utils'
 
-export default class PreloadScene extends Phaser.Scene {
-  constructor(private assetsLoader: AssetLoader, private animationLoader: AnimationLoader) {
+export class PreloadScene extends Phaser.Scene {
+  constructor(private assetsLoader: AssetsLoader, private animationLoader: AnimationLoader) {
     super({ key: 'PreloadScene' })
-    this.assetsLoader = new AssetLoader(this)
+    this.assetsLoader = new AssetsLoader(this)
     this.animationLoader = new AnimationLoader(this)
   }
 
