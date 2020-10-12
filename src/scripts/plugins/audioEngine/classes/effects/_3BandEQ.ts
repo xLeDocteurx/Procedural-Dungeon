@@ -1,4 +1,5 @@
-import { EffectContext, MixChannel } from '..'
+import { MixChannel } from '../channels'
+import { EffectContext } from './contexts'
 
 export interface _3BandEQBreakPoints {
   lowMid?: number

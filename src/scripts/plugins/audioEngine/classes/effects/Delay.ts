@@ -1,6 +1,6 @@
-import { EffectContext } from '..'
 import { keepNumberBetwwen } from '../../utils'
-import { MixChannel } from '../MixChannel.class'
+import { MixChannel } from '../channels'
+import { EffectContext } from './contexts'
 
 export class Delay {
   private _dryChannel = new MixChannel()

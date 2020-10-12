@@ -1,5 +1,6 @@
-import { EffectContext, MixChannel } from '..'
 import { keepNumberBetwwen } from '../../utils'
+import { MixChannel } from '../channels'
+import { EffectContext } from './contexts'
 
 export class Reverb {
   private _dryChannel = new MixChannel()

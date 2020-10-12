@@ -1,5 +1,5 @@
-import { EffectContext } from '..'
 import { makeDistortionCurve } from '../../utils'
+import { EffectContext } from './contexts'
 
 export class Distortion {
   private _context = new EffectContext()

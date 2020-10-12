@@ -1,4 +1,4 @@
-import { EffectContext } from '..'
+import { EffectContext } from './contexts'
 
 export class Filter {
   private _context = new EffectContext()

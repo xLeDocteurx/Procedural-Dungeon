@@ -1,5 +1,5 @@
-import { EffectContext } from '..'
 import { keepNumberBetwwen } from '../../utils'
+import { EffectContext } from './contexts'
 
 export class Pan {
   private _context: EffectContext
