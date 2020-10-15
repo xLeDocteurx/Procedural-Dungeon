@@ -1,30 +1,58 @@
+import { Effect } from '../../types'
+
 export class ChannelStrip {
   private _context: AudioContext
   input: ChannelMergerNode
   gain: GainNode
-  private _nodes: AudioNode[]
+  private _effects: Effect[]
 
   get context() {
     return this._context
   }
 
-  get nodes() {
-    return this._nodes
+  get effects() {
+    return this._effects
   }
 
-  constructor(nodes: AudioNode[]) {
+  constructor(effect: Effect)
+  constructor(effects: Effect[])
+  constructor(fx: any) {
     this._context = new AudioContext()
     this.input = this._context.createChannelMerger()
     this.gain = this._context.createGain()
 
-    this._nodes = nodes
+    // TO DO is array
+    if (fx) {
+      this.addEffects(fx)
+    } else {
+      this.addEffect(fx)
+    }
+  }
 
-    const channelFlow = this._nodes.reduce((prev_node, node) => prev_node.connect(node), this.input)
+  addEffect(effect: Effect) {
+    this._effects.push(effect)
+    this.input.disconnect()
+    this._effects.forEach((ef) => {
+      ef.effectContext.context.destination.disconnect()
+    })
+    const channelFlow = this._effects.reduce(
+      (prev_node, effect) => prev_node.connect(effect.effectContext.context.destination),
+      this.input
+    )
     channelFlow.connect(this.gain).connect(this.context.destination)
   }
 
-  connectNode(node: AudioNode) {
-    node.connect(this.input)
+  addEffects(effects: Effect[]) {
+    this._effects = [...this._effects, ...effects]
+    this.input.disconnect()
+    this._effects.forEach((ef) => {
+      ef.effectContext.context.destination.disconnect()
+    })
+    const channelFlow = this._effects.reduce(
+      (prev_node, effect) => prev_node.connect(effect.effectContext.context.destination),
+      this.input
+    )
+    channelFlow.connect(this.gain).connect(this.context.destination)
   }
 
   setGain(value: number) {

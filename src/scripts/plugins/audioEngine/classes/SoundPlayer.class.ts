@@ -15,14 +15,11 @@ export class SoundPlayer {
     this.soundsLibrary = sounds
 
     this.audioContext = new AudioContext()
-    // channel.connectNode(this.audioContext.destination)
     this.audioContext.destination.connect(channel.input)
   }
 
   async playSound(name: string, volume = this.soundsLibrary[name].volume) {
-    const volumeValue = volume
-
-    await this.loadSound(name, volumeValue)
+    await this.loadSound(name, volume)
     this.stopSound(name)
     this.audioElements[name].htmlAudioElement.play()
     // return () => this.stopSound(name)

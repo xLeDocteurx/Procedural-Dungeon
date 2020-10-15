@@ -2,7 +2,7 @@ import { keepNumberBetwwen } from '../../utils'
 import { EffectContext } from './contexts'
 
 export class Pan {
-  private _context: EffectContext
+  private _effectContext: EffectContext
   private _node: StereoPannerNode
 
   constructor(options: StereoPannerOptions = {}) {
@@ -23,10 +23,17 @@ export class Pan {
     //   // rolloffFactor?: number;
     // }
     options = { ...{ pan: 0 }, ...options }
-    this._context = new EffectContext()
-    this._node = new StereoPannerNode(this._context.context, options)
+    this._effectContext = new EffectContext()
+    this._node = new StereoPannerNode(this._effectContext.context, options)
 
-    this._context.input.connect(this._node).connect(this._context.gain).connect(this._context.context.destination)
+    this._effectContext.input
+      .connect(this._node)
+      .connect(this._effectContext.gain)
+      .connect(this._effectContext.context.destination)
+  }
+
+  get effectContext() {
+    return this._effectContext
   }
 
   setPan(value: number) {
@@ -34,6 +41,6 @@ export class Pan {
   }
 
   setGain(value: number) {
-    this._context.setGain(value)
+    this._effectContext.setGain(value)
   }
 }

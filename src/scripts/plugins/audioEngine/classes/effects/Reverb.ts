@@ -5,7 +5,7 @@ import { EffectContext } from './contexts'
 export class Reverb {
   private _dryChannel = new MixChannel()
   private _effectChannel = new MixChannel()
-  private _context: EffectContext
+  private _effectContext: EffectContext
   private _node: ConvolverNode
 
   private _dryWetRatio: number
@@ -13,22 +13,29 @@ export class Reverb {
   constructor(options: ConvolverOptions = {}, dryWetRatio: number = 0.5) {
     options = { ...{}, ...options }
     this.setDryWetRatio(dryWetRatio)
-    this._context = new EffectContext()
-    this._node = new ConvolverNode(this._context.context, options)
+    this._effectContext = new EffectContext()
+    this._node = new ConvolverNode(this._effectContext.context, options)
     // {
     //   // buffer?: AudioBuffer | null;
     //   // disableNormalization?: boolean;
     // })
 
-    this._context.input.connect(this._dryChannel.input).connect(this._dryChannel.gain).connect(this._context.gain)
+    this._effectContext.input
+      .connect(this._dryChannel.input)
+      .connect(this._dryChannel.gain)
+      .connect(this._effectContext.gain)
 
-    this._context.input
+    this._effectContext.input
       .connect(this._effectChannel.input)
       .connect(this._node)
       .connect(this._effectChannel.gain)
-      .connect(this._context.gain)
+      .connect(this._effectContext.gain)
 
-    this._context.gain.connect(this._context.context.destination)
+    this._effectContext.gain.connect(this._effectContext.context.destination)
+  }
+
+  get effectContext() {
+    return this._effectContext
   }
 
   setDryWetRatio(ratio: number) {
@@ -38,6 +45,6 @@ export class Reverb {
   }
 
   setGain(value: number) {
-    this._context.setGain(value)
+    this._effectContext.setGain(value)
   }
 }
