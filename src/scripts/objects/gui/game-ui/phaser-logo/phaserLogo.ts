@@ -1,24 +1,24 @@
 import { AudioEnginePlugin } from '../../../../plugins/audioEngine/AudioEngine.plugin'
 import { SoundPlayer } from '../../../../plugins/audioEngine/classes'
-import { ChannelStrip } from '../../../../plugins/audioEngine/classes/channels'
-import { EffectType, SoundType } from '../../../../plugins/audioEngine/types'
+import { SoundType } from '../../../../plugins/audioEngine/types'
 
 export class PhaserLogo extends Phaser.Physics.Arcade.Sprite {
-  // ae: Phaser.Plugins.BasePlugin
-  ae: AudioEnginePlugin
   soundPlayer: SoundPlayer
-  effectsChannel: ChannelStrip
+  // effectsChannel: ChannelStrip
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    private ae: AudioEnginePlugin = scene.plugins.get('AudioEngine') as AudioEnginePlugin
+  ) {
     super(scene, x, y, 'phaser-logo')
 
     scene.add.existing(this)
     scene.physics.add.existing(this)
 
-    this.ae = scene.plugins.get('AudioEngine') as AudioEnginePlugin
-
-    const disto = this.ae.createEffect(EffectType.Distortion)
-    this.effectsChannel = this.ae.createChannelStrip('logoEffects', [disto])
+    // const disto = this.ae.createEffect(EffectType.Distortion)
+    // this.effectsChannel = this.ae.createChannelStrip('logoEffects', [disto])
 
     this.soundPlayer = this.ae.createSoundPlayer(
       'logoPlayer',
@@ -28,8 +28,8 @@ export class PhaserLogo extends Phaser.Physics.Arcade.Sprite {
           type: SoundType.oneShot,
           volume: 1,
         },
-      },
-      'logoEffects'
+      }
+      // 'logoEffects'
     )
 
     this.setCollideWorldBounds(true)
