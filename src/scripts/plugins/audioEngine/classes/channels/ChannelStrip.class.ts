@@ -1,28 +1,22 @@
 import { Effect } from '../../types'
 
 export class ChannelStrip {
-  private _context: AudioContext
+  // private _context: AudioContext
   input: ChannelMergerNode
   gain: GainNode
-  private _effects: Effect[]
-
-  get context() {
-    return this._context
-  }
+  private _effects: Effect[] = []
 
   get effects() {
     return this._effects
   }
 
-  constructor(effect: Effect)
-  constructor(effects: Effect[])
-  constructor(fx: any) {
-    this._context = new AudioContext()
+  constructor(_context: AudioContext, effect: Effect)
+  constructor(_context: AudioContext, effects: Effect[])
+  constructor(private _context: AudioContext, fx: any) {
     this.input = this._context.createChannelMerger()
     this.gain = this._context.createGain()
 
-    // TO DO is array
-    if (fx) {
+    if (Array.isArray(fx)) {
       this.addEffects(fx)
     } else {
       this.addEffect(fx)
@@ -33,26 +27,22 @@ export class ChannelStrip {
     this._effects.push(effect)
     this.input.disconnect()
     this._effects.forEach((ef) => {
-      ef.effectContext.context.destination.disconnect()
+      ef.gain.disconnect()
     })
-    const channelFlow = this._effects.reduce(
-      (prev_node, effect) => prev_node.connect(effect.effectContext.context.destination),
-      this.input
-    )
-    channelFlow.connect(this.gain).connect(this.context.destination)
+    const channelFlow = this._effects.reduce((prev_node, ef) => prev_node.connect(ef.input), this.input)
+    // channelFlow.connect(this.gain).connect(this._context.destination)
+    channelFlow.connect(this.gain)
   }
 
   addEffects(effects: Effect[]) {
     this._effects = [...this._effects, ...effects]
     this.input.disconnect()
     this._effects.forEach((ef) => {
-      ef.effectContext.context.destination.disconnect()
+      ef.gain.disconnect()
     })
-    const channelFlow = this._effects.reduce(
-      (prev_node, effect) => prev_node.connect(effect.effectContext.context.destination),
-      this.input
-    )
-    channelFlow.connect(this.gain).connect(this.context.destination)
+    const channelFlow = this._effects.reduce((prev_node, ef) => prev_node.connect(ef.input), this.input)
+    // channelFlow.connect(this.gain).connect(this._context.destination)
+    channelFlow.connect(this.gain)
   }
 
   setGain(value: number) {

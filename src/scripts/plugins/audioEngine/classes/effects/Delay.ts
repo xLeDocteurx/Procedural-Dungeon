@@ -1,36 +1,43 @@
 import { keepNumberBetwwen } from '../../utils'
 import { MixChannel } from '../channels'
-import { EffectContext } from './contexts'
 
 export class Delay {
-  private _dryChannel = new MixChannel()
-  private _effectChannel = new MixChannel()
-  private _effectContext = new EffectContext()
+  private _input: ChannelMergerNode
+  private _gain: GainNode
+
+  private _dryChannel: MixChannel
+  private _effectChannel: MixChannel
   private _node: DelayNode
 
   private _dryWetRatio: number
 
-  constructor(options: DelayOptions = {}, dryWetRatio: number = 0.5) {
+  constructor(private _context: AudioContext, options: DelayOptions = {}, dryWetRatio: number = 0.5) {
     options = { ...{ delayTime: 0.5 }, ...options }
+    this._input = new ChannelMergerNode(this._context)
+    this._gain = new GainNode(this._context)
+
+    this._dryChannel = new MixChannel(this._context)
+    this._effectChannel = new MixChannel(this._context)
     this.setDryWetRatio(dryWetRatio)
-    this._node = new DelayNode(this._effectChannel.context, options)
+    this._node = new DelayNode(this._context, options)
 
-    this._effectContext.input
-      .connect(this._dryChannel.input)
-      .connect(this._dryChannel.gain)
-      .connect(this._effectContext.gain)
+    this._input.connect(this._dryChannel.input).connect(this._dryChannel.gain).connect(this._gain)
 
-    this._effectContext.input
+    this._input
       .connect(this._effectChannel.input)
       .connect(this._node)
       .connect(this._effectChannel.gain)
-      .connect(this._effectContext.gain)
+      .connect(this._gain)
 
-    this._effectContext.gain.connect(this._effectContext.context.destination)
+    this._gain.connect(this._context.destination)
   }
 
-  get effectContext() {
-    return this._effectContext
+  get input() {
+    return this._input
+  }
+
+  get gain() {
+    return this._gain
   }
 
   setDryWetRatio(ratio: number) {
@@ -44,6 +51,6 @@ export class Delay {
   }
 
   setGain(value: number) {
-    this._effectContext.setGain(value)
+    this._gain.gain.value = value
   }
 }
