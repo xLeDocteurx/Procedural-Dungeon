@@ -1,3 +1,4 @@
+import { AudioEnginePlugin } from './plugins/audioEngine/AudioEngine.plugin'
 import * as scenes from './scenes'
 
 const DEFAULT_WIDTH = 1280
@@ -12,6 +13,9 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: Object.values(scenes),
   loader: {
     path: 'assets/',
+  },
+  plugins: {
+    global: [{ key: 'AudioEngine', plugin: AudioEnginePlugin, start: true }],
   },
   scale: {
     parent: 'phaser-game',

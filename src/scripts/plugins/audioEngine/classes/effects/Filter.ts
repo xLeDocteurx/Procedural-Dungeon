@@ -1,21 +1,25 @@
-import { EffectContext } from './contexts'
-
 export class Filter {
-  private _effectContext = new EffectContext()
+  private _input: ChannelMergerNode
+  private _gain: GainNode
+
   private _node: BiquadFilterNode
 
-  constructor(options: BiquadFilterOptions = {}) {
+  constructor(private _context: AudioContext, options: BiquadFilterOptions = {}) {
     options = { ...{ type: 'lowpass', frequency: 500, Q: 1, detune: 0, gain: 1 }, ...options }
-    this._node = new BiquadFilterNode(this._effectContext.context, options)
+    this._input = new ChannelMergerNode(this._context)
+    this._gain = new GainNode(this._context)
 
-    this._effectContext.input
-      .connect(this._node)
-      .connect(this._effectContext.gain)
-      .connect(this._effectContext.context.destination)
+    this._node = new BiquadFilterNode(this._context, options)
+
+    this._input.connect(this._node).connect(this._gain)
   }
 
-  get effectContext() {
-    return this._effectContext
+  get input() {
+    return this._input
+  }
+
+  get gain() {
+    return this._gain
   }
 
   setFrequency(value: number) {
@@ -31,6 +35,6 @@ export class Filter {
   }
 
   setGain(value: number) {
-    this._effectContext.setGain(value)
+    this._gain.gain.value = value
   }
 }

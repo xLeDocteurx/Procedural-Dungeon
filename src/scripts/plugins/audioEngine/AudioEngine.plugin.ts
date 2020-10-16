@@ -18,11 +18,12 @@ export enum EngineMixChannels {
 }
 
 export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
-  private _masterChannel: MixChannel = new MixChannel()
+  private _masterContext: AudioContext = new AudioContext()
+  private _masterChannel: MixChannel = new MixChannel(this._masterContext)
   private _mixChannels: EngineContexts = {
-    soundEffectsChannel: new MixChannel(),
-    musicChannel: new MixChannel(),
-    ambianceChannel: new MixChannel(),
+    soundEffectsChannel: new MixChannel(this._masterContext),
+    musicChannel: new MixChannel(this._masterContext),
+    ambianceChannel: new MixChannel(this._masterContext),
   }
 
   _channelStrips: Dic<ChannelStrip> = {}
@@ -31,9 +32,10 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
   constructor(pluginManager: Phaser.Plugins.PluginManager) {
     super(pluginManager)
 
-    this._mixChannels.soundEffectsChannel.context.destination.connect(this._masterChannel.input)
-    this._mixChannels.musicChannel.context.destination.connect(this._masterChannel.input)
-    this._mixChannels.ambianceChannel.context.destination.connect(this._masterChannel.input)
+    this._mixChannels.soundEffectsChannel.gain.connect(this._masterChannel.input)
+    this._mixChannels.musicChannel.gain.connect(this._masterChannel.input)
+    this._mixChannels.ambianceChannel.gain.connect(this._masterChannel.input)
+    this._masterChannel.gain.connect(this._masterContext.destination)
   }
 
   get master() {
@@ -56,6 +58,7 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
     channelName: any = EngineMixChannels.soundEffectsChannel
   ): SoundPlayer {
     this._soundPlayers[playerName] = new SoundPlayer(
+      this._masterContext,
       sounds,
       Object.keys(this._mixChannels).some((key) => key === channelName)
         ? this._mixChannels[channelName]
@@ -65,34 +68,39 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
     return this._soundPlayers[playerName]
   }
 
-  createEffect(effectType: EffectType, breakpoints: _3BandEQBreakPoints)
-  createEffect(effectType: EffectType, effectOptions: EffectOptions)
+  createEffect(effectType: EffectType, breakpoints?: _3BandEQBreakPoints)
+  createEffect(effectType: EffectType, effectOptions?: EffectOptions)
   createEffect(effectType: EffectType, options: any = {}) {
     if (effectType === EffectType.Delay) {
-      return new Delay(options)
+      return new Delay(this._masterContext, options)
     } else if (effectType === EffectType.Distortion) {
-      return new Distortion(options)
+      return new Distortion(this._masterContext, options)
     } else if (effectType === EffectType.Filter) {
-      return new Filter(options)
+      return new Filter(this._masterContext, options)
     } else if (effectType === EffectType.Pan) {
-      return new Pan(options)
+      return new Pan(this._masterContext, options)
     } else if (effectType === EffectType.Reverb) {
-      return new Reverb(options)
+      return new Reverb(this._masterContext, options)
     } else if (effectType === EffectType._3BandEQ) {
-      return new _3BandEQ(options)
+      return new _3BandEQ(this._masterContext, options)
     }
   }
 
-  createChannelStrip(playerName: string, effects: Effect[], mixChannelName?: EngineMixChannels): ChannelStrip
-  createChannelStrip(playerName: string, effects: Effect[], channelStripName?: string): ChannelStrip
-  createChannelStrip(name: string, effects: Effect[], channelName: any): ChannelStrip {
-    this._channelStrips[name] = new ChannelStrip(effects)
-    this._channelStrips[name].context.destination.connect(
+  createChannelStrip(channelName: string, effects?: Effect[], mixChannelName?: EngineMixChannels): ChannelStrip
+  createChannelStrip(channelName: string, effects?: Effect[], channelStripName?: string): ChannelStrip
+  createChannelStrip(
+    name: string,
+    effects: Effect[] = [],
+    channelName: any = EngineMixChannels.soundEffectsChannel
+  ): ChannelStrip {
+    this._channelStrips[name] = new ChannelStrip(this._masterContext, effects)
+    // this._channelStrips[name].context.destination.connect(
+    this._channelStrips[name].gain.connect(
       Object.keys(this._mixChannels).some((key) => key === channelName)
         ? this._mixChannels[channelName].input
         : this._channelStrips[channelName].input
     )
 
-    return this._channelStrips[channelName]
+    return this._channelStrips[name]
   }
 }

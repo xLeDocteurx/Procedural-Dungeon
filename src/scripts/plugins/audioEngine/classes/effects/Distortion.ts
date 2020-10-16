@@ -1,22 +1,27 @@
 import { makeDistortionCurve } from '../../utils'
-import { EffectContext } from './contexts'
 
 export class Distortion {
-  private _effectContext = new EffectContext()
+  private _input: ChannelMergerNode
+  private _gain: GainNode
+
   private _node: WaveShaperNode
 
-  constructor(options: WaveShaperOptions = {}) {
+  constructor(private _context: AudioContext, options: WaveShaperOptions = {}) {
     options = { ...{ curve: makeDistortionCurve(), oversample: '2x' }, ...options }
-    this._node = new WaveShaperNode(this._effectContext.context, options)
+    this._input = new ChannelMergerNode(this._context)
+    this._gain = new GainNode(this._context)
 
-    this._effectContext.input
-      .connect(this._node)
-      .connect(this._effectContext.gain)
-      .connect(this._effectContext.context.destination)
+    this._node = new WaveShaperNode(this._context, options)
+
+    this._input.connect(this._node).connect(this._gain)
   }
 
-  get effectContext() {
-    return this._effectContext
+  get input() {
+    return this._input
+  }
+
+  get gain() {
+    return this._gain
   }
 
   setCurve(amount: number)
@@ -35,6 +40,6 @@ export class Distortion {
   }
 
   setGain(value: number) {
-    this._effectContext.setGain(value)
+    this._gain.gain.value = value
   }
 }
