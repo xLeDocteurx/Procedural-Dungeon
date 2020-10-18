@@ -20,6 +20,7 @@ export class ChannelStrip implements Channel {
   }
 
   connect(channel: Channel): AudioNode {
+    // this.output.disconnect()
     this.output.connect(channel.input)
     return channel.output
   }
@@ -47,6 +48,9 @@ export class ChannelStrip implements Channel {
     }
 
     this._effects[this._effects.length - 1].output.connect(this.output)
+
+    // const channelFlow = this._effects.reduce((prev_node, ef) => prev_node.connect(ef.input), this.input)
+    // channelFlow.connect(this.gain)
   }
 
   setGain(value: number) {

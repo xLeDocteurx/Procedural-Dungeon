@@ -23,8 +23,8 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
     ambianceChannel: new MixChannel(this._masterContext),
   }
 
-  _channelStrips: Dic<ChannelStrip> = {}
-  _soundPlayers: Dic<SoundPlayer> = {}
+  private _channelStrips: Dic<ChannelStrip> = {}
+  private _soundPlayers: Dic<SoundPlayer> = {}
 
   constructor(pluginManager: Phaser.Plugins.PluginManager) {
     super(pluginManager)
@@ -39,13 +39,25 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
     return this._masterChannel
   }
 
-  get mixChannels() {
-    return this._mixChannels
+  // get mixChannels() {
+  //   return this._mixChannels
+  // }
+
+  get soundEffectsChannel() {
+    return this._mixChannels.soundEffectsChannel
   }
 
-  get channelStrips() {
-    return this._channelStrips
+  get musicChannel() {
+    return this._mixChannels.musicChannel
   }
+
+  get ambianceChannel() {
+    return this._mixChannels.ambianceChannel
+  }
+
+  // get channelStrips() {
+  //   return this._channelStrips
+  // }
 
   createSoundPlayer(playerName: string, sounds: Dic<Sound>, mixChannelName?: EngineMixChannels): SoundPlayer
   createSoundPlayer(playerName: string, sounds: Dic<Sound>, channelStripName?: string): SoundPlayer

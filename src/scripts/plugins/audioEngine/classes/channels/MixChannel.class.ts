@@ -11,6 +11,7 @@ export class MixChannel implements Channel {
   }
 
   connect(channel: Channel): AudioNode {
+    // this.output.disconnect()
     this.output.connect(channel.input)
     return channel.output
   }

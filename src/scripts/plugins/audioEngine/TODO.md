@@ -8,3 +8,5 @@
 - Virer l'obtionnel dans le SoundElement interface
 
 - Revoir le typage des effets pour le passage de parametre des options ( un generique sur la methode de creation d'effet ? )
+
+- Pouvoir connecter un channel à plusieurs channels
