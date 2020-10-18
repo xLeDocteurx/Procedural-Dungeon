@@ -1,22 +1,37 @@
 import { Dic } from '../../../utils/types'
-import { Channel, Sound, SoundType } from '../types'
+import { Channel, Sound } from '../types'
 
 export interface SoundElement {
-  htmlAudioElement?: HTMLAudioElement
-  mediaElementAudioSourceNode?: MediaElementAudioSourceNode
+  htmlAudioElement: HTMLAudioElement
+  mediaElementAudioSourceNode: MediaElementAudioSourceNode
 }
 
 export class SoundPlayer {
   private _audioElements: Dic<SoundElement> = {}
+  private _output: GainNode
 
   constructor(private _context: AudioContext, private _soundsLibrary: Dic<Sound>, private _channel: Channel) {
-    console.log('this._channel : ', this._channel)
+    this._output = new GainNode(this._context)
+  }
+
+  connect(channel: Channel) {
+    this._channel = channel
+    this._output.disconnect()
+    this._output.connect(channel.input)
   }
 
   async playSound(name: string, volume = this._soundsLibrary[name].volume) {
-    await this.loadSound(name, volume)
-    this.stopSound(name)
+    if (!this._audioElements[name]) {
+      await this.loadSound(name, volume)
+    }
+    if (this._soundsLibrary[name].type !== 'oneShotParallel') {
+      this.stopSound(name)
+    }
     this._audioElements[name].htmlAudioElement.play()
+  }
+
+  pauseSound(name: string) {
+    this._audioElements[name].htmlAudioElement.pause()
   }
 
   stopSound(name: string) {
@@ -26,17 +41,16 @@ export class SoundPlayer {
 
   private async loadSound(name: string, volume: number): Promise<void> {
     const sound: Sound = this._soundsLibrary[name]
-    if (!this._audioElements[name]) {
-      this._audioElements[name] = {}
-      this._audioElements[name].htmlAudioElement = await this.handleSoundLoading(sound.path)
-      this._audioElements[name].htmlAudioElement.loop = sound.type === SoundType.loop ? true : false
-      this._audioElements[name].htmlAudioElement.volume = volume
+    const htmlAudioElement = await this.handleSoundLoading(sound.path)
 
-      this._audioElements[name].mediaElementAudioSourceNode = this._context.createMediaElementSource(
-        this._audioElements[name].htmlAudioElement
-      )
-      this._audioElements[name].mediaElementAudioSourceNode.connect(this._channel.input)
+    this._audioElements[name] = {
+      htmlAudioElement,
+      mediaElementAudioSourceNode: this._context.createMediaElementSource(htmlAudioElement),
     }
+    this._audioElements[name].htmlAudioElement.loop = sound.type === 'loop' ? true : false
+    this._audioElements[name].htmlAudioElement.volume = volume
+
+    this._audioElements[name].mediaElementAudioSourceNode.connect(this._channel.input)
   }
 
   private async handleSoundLoading(path: string): Promise<HTMLAudioElement> {

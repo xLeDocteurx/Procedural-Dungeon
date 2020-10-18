@@ -1,7 +1,5 @@
 ( Les contexts dans les effets et le routing dans le channel strip )
 
-- Remplacer les .reduce et les .create
-
 - Ajouter un effet de type compresseur
 - Pouvoir jouer en parralel un meme son
 - Ajouter un effet de type Wah/Auto Wah

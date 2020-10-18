@@ -46,19 +46,19 @@ export class _3BandEQ {
     })
 
     this._input
-      .connect(this._lowFilterChannel.input)
       .connect(this._lowFilterNode)
-      .connect(this._lowFilterChannel.gain)
+      .connect(this._lowFilterChannel.input)
+      .connect(this._lowFilterChannel.output)
       .connect(this._gain)
     this._input
-      .connect(this._midFilterChannel.input)
       .connect(this._midFilterNode)
-      .connect(this._midFilterChannel.gain)
+      .connect(this._midFilterChannel.input)
+      .connect(this._midFilterChannel.output)
       .connect(this._gain)
     this._input
-      .connect(this._highFilterChannel.input)
       .connect(this._highFilterNode)
-      .connect(this._highFilterChannel.gain)
+      .connect(this._highFilterChannel.input)
+      .connect(this._highFilterChannel.output)
       .connect(this._gain)
   }
 
@@ -66,12 +66,12 @@ export class _3BandEQ {
     return this._input
   }
 
-  get gain() {
+  get output() {
     return this._gain
   }
 
   setLowGain(value: number) {
-    this._lowFilterChannel.gain.gain.value = value
+    this._lowFilterChannel.output.gain.value = value
   }
 
   setLowFrequency(value: number) {
@@ -83,7 +83,7 @@ export class _3BandEQ {
   }
 
   setMidGain(value: number) {
-    this._midFilterChannel.gain.gain.value = value
+    this._midFilterChannel.output.gain.value = value
   }
 
   setMidFrequency(value: number) {
@@ -95,7 +95,7 @@ export class _3BandEQ {
   }
 
   setHighGain(value: number) {
-    this._highFilterChannel.gain.gain.value = value
+    this._highFilterChannel.output.gain.value = value
   }
 
   setHighFrequency(value: number) {

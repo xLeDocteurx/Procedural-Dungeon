@@ -1,14 +1,21 @@
-export class MixChannel {
-  input: ChannelMergerNode
-  gain: GainNode
+import { Channel } from '.'
 
-  constructor(private context: AudioContext) {
-    this.input = this.context.createChannelMerger()
-    this.gain = this.context.createGain()
-    this.input.connect(this.gain)
+export class MixChannel implements Channel {
+  input: ChannelMergerNode
+  output: GainNode
+
+  constructor(private _context: AudioContext) {
+    this.input = new ChannelMergerNode(this._context)
+    this.output = new GainNode(this._context)
+    this.input.connect(this.output)
+  }
+
+  connect(channel: Channel): AudioNode {
+    this.output.connect(channel.input)
+    return channel.output
   }
 
   setGain(value: number) {
-    this.gain.gain.value = value
+    this.output.gain.value = value
   }
 }

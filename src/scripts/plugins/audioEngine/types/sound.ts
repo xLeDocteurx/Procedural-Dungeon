@@ -6,9 +6,6 @@ export interface Sound {
   volume: number
 }
 
-export enum SoundType {
-  oneShot = 'oneShot',
-  loop = 'loop',
-}
+export type SoundType = 'oneShot' | 'oneShotParallel' | 'loop'
 
 export type SoundsLibrary = Dic<Sound>

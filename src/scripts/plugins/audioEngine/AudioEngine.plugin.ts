@@ -11,13 +11,10 @@ export interface EngineContexts {
   ambianceChannel: MixChannel
 }
 
-export enum EngineMixChannels {
-  soundEffectsChannel = 'soundEffectsChannel',
-  musicChannel = 'musicChannel',
-  ambianceChannel = 'ambianceChannel',
-}
+export type EngineMixChannels = 'soundEffectsChannel' | 'musicChannel' | 'ambianceChannel'
 
 export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
+  // private _masterContext: AudioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
   private _masterContext: AudioContext = new AudioContext()
   private _masterChannel: MixChannel = new MixChannel(this._masterContext)
   private _mixChannels: EngineContexts = {
@@ -32,10 +29,10 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
   constructor(pluginManager: Phaser.Plugins.PluginManager) {
     super(pluginManager)
 
-    this._mixChannels.soundEffectsChannel.gain.connect(this._masterChannel.input)
-    this._mixChannels.musicChannel.gain.connect(this._masterChannel.input)
-    this._mixChannels.ambianceChannel.gain.connect(this._masterChannel.input)
-    this._masterChannel.gain.connect(this._masterContext.destination)
+    this._mixChannels.soundEffectsChannel.output.connect(this._masterChannel.input)
+    this._mixChannels.musicChannel.output.connect(this._masterChannel.input)
+    this._mixChannels.ambianceChannel.output.connect(this._masterChannel.input)
+    this._masterChannel.output.connect(this._masterContext.destination)
   }
 
   get master() {
@@ -52,11 +49,7 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
 
   createSoundPlayer(playerName: string, sounds: Dic<Sound>, mixChannelName?: EngineMixChannels): SoundPlayer
   createSoundPlayer(playerName: string, sounds: Dic<Sound>, channelStripName?: string): SoundPlayer
-  createSoundPlayer(
-    playerName: string,
-    sounds: Dic<Sound>,
-    channelName: any = EngineMixChannels.soundEffectsChannel
-  ): SoundPlayer {
+  createSoundPlayer(playerName: string, sounds: Dic<Sound>, channelName: any = 'soundEffectsChannel'): SoundPlayer {
     this._soundPlayers[playerName] = new SoundPlayer(
       this._masterContext,
       sounds,
@@ -68,34 +61,34 @@ export class AudioEnginePlugin extends Phaser.Plugins.BasePlugin {
     return this._soundPlayers[playerName]
   }
 
-  createEffect(effectType: EffectType, breakpoints?: _3BandEQBreakPoints)
-  createEffect(effectType: EffectType, effectOptions?: EffectOptions)
-  createEffect(effectType: EffectType, options: any = {}) {
-    if (effectType === EffectType.Delay) {
+  createEffect(effectType: 'Delay', effectOptions?: EffectOptions): Delay
+  createEffect(effectType: 'Distortion', effectOptions?: EffectOptions): Distortion
+  createEffect(effectType: 'Filter', effectOptions?: EffectOptions): Filter
+  createEffect(effectType: 'Pan', effectOptions?: EffectOptions): Pan
+  createEffect(effectType: 'Reverb', effectOptions?: EffectOptions): Reverb
+  createEffect(effectType: '_3BandEQ', breakpoints?: _3BandEQBreakPoints): _3BandEQ
+  createEffect(effectType: EffectType, options: any = {}): Effect {
+    if (effectType === 'Delay') {
       return new Delay(this._masterContext, options)
-    } else if (effectType === EffectType.Distortion) {
+    } else if (effectType === 'Distortion') {
       return new Distortion(this._masterContext, options)
-    } else if (effectType === EffectType.Filter) {
+    } else if (effectType === 'Filter') {
       return new Filter(this._masterContext, options)
-    } else if (effectType === EffectType.Pan) {
+    } else if (effectType === 'Pan') {
       return new Pan(this._masterContext, options)
-    } else if (effectType === EffectType.Reverb) {
+    } else if (effectType === 'Reverb') {
       return new Reverb(this._masterContext, options)
-    } else if (effectType === EffectType._3BandEQ) {
+    } else if (effectType === '_3BandEQ') {
       return new _3BandEQ(this._masterContext, options)
     }
   }
 
   createChannelStrip(channelName: string, effects?: Effect[], mixChannelName?: EngineMixChannels): ChannelStrip
   createChannelStrip(channelName: string, effects?: Effect[], channelStripName?: string): ChannelStrip
-  createChannelStrip(
-    name: string,
-    effects: Effect[] = [],
-    channelName: any = EngineMixChannels.soundEffectsChannel
-  ): ChannelStrip {
+  createChannelStrip(name: string, effects: Effect[] = [], channelName: any = 'soundEffectsChannel'): ChannelStrip {
     this._channelStrips[name] = new ChannelStrip(this._masterContext, effects)
     // this._channelStrips[name].context.destination.connect(
-    this._channelStrips[name].gain.connect(
+    this._channelStrips[name].output.connect(
       Object.keys(this._mixChannels).some((key) => key === channelName)
         ? this._mixChannels[channelName].input
         : this._channelStrips[channelName].input

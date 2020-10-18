@@ -1,20 +1,16 @@
+import { Channel } from '.'
 import { Effect } from '../../types'
 
-export class ChannelStrip {
-  // private _context: AudioContext
+export class ChannelStrip implements Channel {
   input: ChannelMergerNode
-  gain: GainNode
+  output: GainNode
   private _effects: Effect[] = []
-
-  get effects() {
-    return this._effects
-  }
 
   constructor(_context: AudioContext, effect: Effect)
   constructor(_context: AudioContext, effects: Effect[])
   constructor(private _context: AudioContext, fx: any) {
-    this.input = this._context.createChannelMerger()
-    this.gain = this._context.createGain()
+    this.input = new ChannelMergerNode(this._context)
+    this.output = new GainNode(this._context)
 
     if (Array.isArray(fx)) {
       this.addEffects(fx)
@@ -23,29 +19,37 @@ export class ChannelStrip {
     }
   }
 
+  connect(channel: Channel): AudioNode {
+    this.output.connect(channel.input)
+    return channel.output
+  }
+
   addEffect(effect: Effect) {
     this._effects.push(effect)
-    this.input.disconnect()
-    this._effects.forEach((ef) => {
-      ef.gain.disconnect()
-    })
-    const channelFlow = this._effects.reduce((prev_node, ef) => prev_node.connect(ef.input), this.input)
-    // channelFlow.connect(this.gain).connect(this._context.destination)
-    channelFlow.connect(this.gain)
+    this.rootEffects()
   }
 
   addEffects(effects: Effect[]) {
     this._effects = [...this._effects, ...effects]
+    this.rootEffects()
+  }
+
+  rootEffects() {
     this.input.disconnect()
     this._effects.forEach((ef) => {
-      ef.gain.disconnect()
+      ef.output.disconnect()
     })
-    const channelFlow = this._effects.reduce((prev_node, ef) => prev_node.connect(ef.input), this.input)
-    // channelFlow.connect(this.gain).connect(this._context.destination)
-    channelFlow.connect(this.gain)
+    this.input.connect(this._effects[0].input)
+    if (this._effects.length > 1) {
+      for (let i = 0; i < this._effects.length - 1; i++) {
+        this._effects[i].output.connect(this._effects[i + 1].input)
+      }
+    }
+
+    this._effects[this._effects.length - 1].output.connect(this.output)
   }
 
   setGain(value: number) {
-    this.gain.gain.value = value
+    this.output.gain.value = value
   }
 }

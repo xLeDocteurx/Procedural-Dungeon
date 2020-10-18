@@ -21,12 +21,12 @@ export class Delay {
     this.setDryWetRatio(dryWetRatio)
     this._node = new DelayNode(this._context, options)
 
-    this._input.connect(this._dryChannel.input).connect(this._dryChannel.gain).connect(this._gain)
+    this._input.connect(this._dryChannel.input).connect(this._dryChannel.output).connect(this._gain)
 
     this._input
       .connect(this._effectChannel.input)
       .connect(this._node)
-      .connect(this._effectChannel.gain)
+      .connect(this._effectChannel.output)
       .connect(this._gain)
 
     this._gain.connect(this._context.destination)
@@ -36,14 +36,14 @@ export class Delay {
     return this._input
   }
 
-  get gain() {
+  get output() {
     return this._gain
   }
 
   setDryWetRatio(ratio: number) {
     this._dryWetRatio = keepNumberBetwwen(ratio, 0, 1)
-    this._dryChannel.gain.gain.value = 1 - this._dryWetRatio
-    this._effectChannel.gain.gain.value = this._dryWetRatio
+    this._dryChannel.output.gain.value = 1 - this._dryWetRatio
+    this._effectChannel.output.gain.value = this._dryWetRatio
   }
 
   setDelayTime(time: number) {

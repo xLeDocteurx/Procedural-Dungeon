@@ -34,7 +34,7 @@ export class Pan {
     return this._input
   }
 
-  get gain() {
+  get output() {
     return this._gain
   }
 
